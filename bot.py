@@ -5,7 +5,7 @@ import os
 import requests
 import re
 
-TOKEN = "8602271329:AAHLyw9IkhD345-7N-4xqfvJgeccmZVgmZg"
+TOKEN = "8602271329:AAHyMA06xYEmjWlzRu1KYfV1_DC-6lPzRbc"
 DATA_FILE = "notes.json"
 
 def load_notes():
@@ -68,8 +68,7 @@ def get_crypto(symbol):
                 names = {
                     "bitcoin": "🪙 بیت‌کوین",
                     "ethereum": "🔷 اتریوم",
-                    "dogecoin": "🐕 دوج‌کوین",
-                    "solana": "☀️ سولانا"
+                    "dogecoin": "🐕 دوج‌کوین"
                 }
                 name = names.get(symbol, symbol.upper())
                 return f"{name}: ${price:,.2f}"
@@ -104,7 +103,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("💵 دلار", callback_data="usd"), InlineKeyboardButton("🏆 طلا", callback_data="gold")],
         [InlineKeyboardButton("🪙 سکه", callback_data="coin"), InlineKeyboardButton("🚗 ماشین", callback_data="car")],
         [InlineKeyboardButton("🪙 بیت‌کوین", callback_data="btc"), InlineKeyboardButton("🔷 اتریوم", callback_data="eth")],
-        [InlineKeyboardButton("🐕 دوج‌کوین", callback_data="doge"), InlineKeyboardButton("☀️ سولانا", callback_data="solana")],
         [InlineKeyboardButton("📝 یادداشت‌ها", callback_data="notes")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -116,8 +114,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🚗 قیمت ماشین\n\n"
         "📝 **یادداشت‌ها:**\n"
         "/note [متن] - ذخیره یادداشت\n"
-        "/mynotes - دیدن یادداشت‌ها\n"
-        "/del [شماره] - حذف یادداشت"
+        "/mynotes - دیدن یادداشت‌ها"
     )
     await update.message.reply_text(text, reply_markup=reply_markup)
 
@@ -125,7 +122,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("⏳ در حال دریافت...")
     msg = (
         f"📊 **قیمت‌ها:**\n\n{get_usd()}\n{get_gold()}\n{get_coin()}\n"
-        f"{get_crypto('bitcoin')}\n{get_crypto('ethereum')}\n{get_crypto('dogecoin')}\n{get_crypto('solana')}"
+        f"{get_crypto('bitcoin')}\n{get_crypto('ethereum')}\n{get_crypto('dogecoin')}"
     )
     await update.message.reply_text(msg)
 
@@ -146,9 +143,6 @@ async def eth(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def doge(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(get_crypto("dogecoin"))
-
-async def solana(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(get_crypto("solana"))
 
 async def car(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("⏳ در حال دریافت...")
@@ -207,7 +201,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = str(update.effective_user.id)
     data = query.data
     if data == "price":
-        msg = f"📊 **قیمت‌ها:**\n\n{get_usd()}\n{get_gold()}\n{get_coin()}\n{get_crypto('bitcoin')}\n{get_crypto('ethereum')}\n{get_crypto('dogecoin')}\n{get_crypto('solana')}"
+        msg = f"📊 **قیمت‌ها:**\n\n{get_usd()}\n{get_gold()}\n{get_coin()}\n{get_crypto('bitcoin')}\n{get_crypto('ethereum')}\n{get_crypto('dogecoin')}"
         await query.message.reply_text(msg)
     elif data == "usd":
         await query.message.reply_text(get_usd())
@@ -219,10 +213,6 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text(get_crypto("bitcoin"))
     elif data == "eth":
         await query.message.reply_text(get_crypto("ethereum"))
-    elif data == "doge":
-        await query.message.reply_text(get_crypto("dogecoin"))
-    elif data == "solana":
-        await query.message.reply_text(get_crypto("solana"))
     elif data == "car":
         await query.message.reply_text(f"🚗 **ماشین‌ها:**\n\n{get_cars()}")
     elif data == "notes":
@@ -247,13 +237,12 @@ def main():
     app.add_handler(CommandHandler("btc", btc))
     app.add_handler(CommandHandler("eth", eth))
     app.add_handler(CommandHandler("doge", doge))
-    app.add_handler(CommandHandler("solana", solana))
     app.add_handler(CommandHandler("car", car))
     app.add_handler(CommandHandler("note", note))
     app.add_handler(CommandHandler("mynotes", mynotes))
     app.add_handler(CommandHandler("del", delete_note))
     app.add_handler(CallbackQueryHandler(button_callback))
-    print("🤖 ربات روشن شد!")
+    print("🤖 ربات قیمت‌یاب روشن شد!")
     app.run_polling()
 
 if __name__ == "__main__":
